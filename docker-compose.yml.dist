@@ -1,0 +1,22 @@
+name: fresh-wallabag
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NODE_VERSION: 'lts'
+    restart: unless-stopped
+    environment:
+      LOG_DIR: '/logs'
+      RUN_INTERVAL_MINUTES: '10'
+      FRESHRSS_GREADER_API_URL: 'https://freshrss.moninstance.com/api/greader.php'
+      FRESHRSS_GREADER_API_USER: 'login'
+      FRESHRSS_GREADER_API_PASSWORD: 'password'
+      WALLABAG_URL_PATTERN: 'https://wallabag.moninstance.com/feed/wallabag/.*'
+      WALLABAG_INSTANCE_URL: 'https://wallabag.moninstance.com'
+      WALLABAG_CLIENT_ID: 'client_id'
+      WALLABAG_CLIENT_SECRET: 'client_secret'
+      WALLABAG_USERNAME: 'username'
+      WALLABAG_PASSWORD: 'password'

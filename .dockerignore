@@ -1,0 +1,7 @@
+/.idea/
+/data/
+/dist/
+/logs/
+/node_modules/
+/.env*
+/docker-compose.*
