@@ -2,6 +2,7 @@ import { WALLABAG_INSTANCE_URL } from '@/config';
 import { logger } from '@/utils/logger';
 import { IWallabagArticle, IWallabagArticlesResponse } from '@/interfaces/Wallabag.Article.interface';
 import axios from 'axios';
+import { normalizeTitle } from '@/utils/normalizing';
 
 class WallabagService {
     private auth: string | null = null;
@@ -43,11 +44,12 @@ class WallabagService {
             }
         }).then(async (res) => {
             const content: IWallabagArticlesResponse = res.data;
+            const articles: IWallabagArticle[] = content._embedded.items.map((article) => this.normalizeArticle(article));
             if (content.page >= content.pages) {
-                return content._embedded.items;
+                return articles;
             }
 
-            return content._embedded.items.concat(await this.getUnreadArticles(page + 1));
+            return articles.concat(await this.getUnreadArticles(page + 1));
         }).catch((err) => {
             logger.error('Error fetching articles:', err);
             throw err;
@@ -74,6 +76,11 @@ class WallabagService {
             logger.error('Error marking article as read:', err);
             throw err;
         });
+    }
+
+    private normalizeArticle (article: IWallabagArticle): IWallabagArticle {
+        article.title = normalizeTitle(article.title);
+        return article;
     }
 }
 

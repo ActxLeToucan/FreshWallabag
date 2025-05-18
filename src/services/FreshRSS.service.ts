@@ -3,6 +3,7 @@ import { IFreshRSSSubscriptionsResponse } from '@/interfaces/FreshRSS.Subscripti
 import { IFreshRSSArticle, IFreshRSSArticlesResponse } from '@/interfaces/FreshRSS.Article.interface';
 import { logger } from '@/utils/logger';
 import axios from 'axios';
+import { normalizeTitle } from '@/utils/normalizing';
 
 class FreshRSSService {
     private auth: string | null = null;
@@ -16,7 +17,7 @@ class FreshRSSService {
         formData.append('Passwd', password);
 
         return axios.post(url.toString(), formData, {
-            headers: { "Content-Type": "multipart/form-data" }
+            headers: { 'Content-Type': 'multipart/form-data' }
         }).then((res) => {
             const match = res.data.match(/Auth=(.*)/);
             if (!match) {
@@ -71,16 +72,22 @@ class FreshRSSService {
             }
         }).then(async (res) => {
             const content: IFreshRSSArticlesResponse = res.data;
+            const articles = content.items.map((article) => this.normalizeArticle(article));
             if (!content.continuation) {
-                return content.items;
+                return articles;
             }
 
-            return content.items.concat(await this.getArticles(subscriptionId, content.continuation));
+            return articles.concat(await this.getArticles(subscriptionId, content.continuation));
         }).catch((err) => {
             logger.error('Error fetching articles:', err);
             throw err;
         });
     };
+
+    private normalizeArticle (article: IFreshRSSArticle): IFreshRSSArticle {
+        article.title = normalizeTitle(article.title);
+        return article;
+    }
 }
 
 export default FreshRSSService;
