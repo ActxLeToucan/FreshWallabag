@@ -2,11 +2,7 @@ name: fresh-wallabag
 
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        NODE_VERSION: 'lts'
+    image: ghcr.io/actxletoucan/fresh-wallabag:latest
     restart: unless-stopped
     environment:
       LOG_DIR: '/logs'
