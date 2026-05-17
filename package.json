@@ -13,7 +13,7 @@
   "license": "GPL-3.0",
   "engines": {
     "node": ">=26.0.0",
-    "npm": ">=11.0.0"
+    "npm": ">=11.10.0"
   },
   "dependencies": {
     "@eslint/js": "^10.0.1",
